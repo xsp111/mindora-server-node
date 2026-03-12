@@ -1,0 +1,23 @@
+const msg = {
+	SERVER_ERROR: '服务器出错了~',
+	NOT_LOGIN: '未登录',
+	NO_REMEMBER: '未记住登录',
+	LOGIN_SUCCESS: '登录成功',
+	LOGIN_FAILED_NAME_OR_PASSWORD: '用户名或密码错误',
+	LOGIN_FAILED_EXIST: '用户不存在',
+	USER_CREATED_FAILED: '用户注册失败',
+	USER_NAME_ALREADY_EXISTS: '用户名已存在',
+	USER_NOT_FOUND: '用户不存在',
+	LOGOUT_SUCCESS: '退出成功',
+	REFRESH_TOKEN_INVALID: '刷新令牌无效',
+	REFRESH_TOKEN_EXPIRED: '刷新令牌过期',
+	ACCESS_TOKEN_INVALID: '访问令牌无效',
+	MSG_NOT_FOUND: '会话不存在',
+	VERIFY_EMAIL_SUCCESS: '邮件发送成功',
+	VERIFY_EMAIL_TOKEN_INVALID: '邮件验证令牌无效',
+	VERIFY_EMAIL_FAILED: '邮件发送失败',
+	EMAIL_LOGIN_FAILED: '邮件登录失败',
+	MAIL_SEND_FAILED: '邮件发送失败',
+	PLEASE_TRY_AGAIN: '请重新尝试',
+};
+export default msg;

@@ -1,0 +1,10 @@
+import { Hono } from 'hono';
+import { agentApiController } from '../controllers/index.js';
+const chatRoute = new Hono();
+chatRoute.post('/', agentApiController.chat);
+chatRoute.post('/createChat', agentApiController.createMsg);
+chatRoute.post('/get', agentApiController.get);
+chatRoute.post('/list', agentApiController.getMsgList);
+chatRoute.post('/delete', agentApiController.deleteMsg);
+chatRoute.post('/newLabel', agentApiController.newLabel);
+export default chatRoute;

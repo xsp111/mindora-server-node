@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Mindora 登录</title>
+	</head>
+	<style>
+		body {
+			height: 60vh;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		a {
+			border: none;
+			text-decoration: none;
+			font-size: 16px;
+			color: black;
+		}
+		.container {
+			height: 200px;
+			width: 400px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px #c9bcbc;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 10px;
+		}
+		.verifyState {
+			font-size: 24px;
+			font-weight: bold;
+			color: #c84444;
+		}
+		.site {
+			color: #c84444;
+		}
+	</style>
+	<body>
+		<div class="container">
+			<span class="verifyState verifyResDisplay">正在验证，请稍候</span>
+			<a href="https://mindora.xsp111.cn/" target="_blank"
+				>点击返回 <span class="site">Mindora</span></a
+			>
+		</div>
+		<script>
+			const verifyResDisplay =
+				document.querySelector('.verifyResDisplay');
+			window.onload = () => {
+				fetch('/api/user/login/email/verify', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						verifyToken:
+							window.location.href.split('verifyToken=')[1],
+					}),
+				})
+					.then((res) => {
+						return res.json();
+					})
+					.then((res) => {
+						const { success } = res;
+						if (success) {
+							verifyResDisplay.textContent = '登录成功!';
+						} else {
+							verifyResDisplay.textContent =
+								'登录失败，' + res.msg;
+						}
+					});
+			};
+		</script>
+	</body>
+</html>
