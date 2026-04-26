@@ -4,9 +4,10 @@ import type {
 	ConversationIdxList,
 	dbOperationRes,
 	Message,
-} from '../../../const/api.js';
-import msg from '../../../const/msg.js';
-import db from '../../../db/index.js';
+} from '@/const/api.js';
+import msg from '@/const/msg.js';
+import db from '@/db/index.js';
+import type { Memory } from '../type.js';
 
 async function getCurrentConversation(
 	id: string,
@@ -32,9 +33,13 @@ async function getCurrentConversation(
 					label: conversation.label,
 				},
 				content: conversation.content as Message[],
+				runtimeContent: conversation.runtimeContent as Message[],
+				predictTokenCost: conversation.predictTokenCost || 0,
+				lastTokenCost: conversation.lastTokenCost || 0,
 			},
 		};
 	} catch (error) {
+		console.error(error);
 		return {
 			success: false,
 			msg: msg.SERVER_ERROR,
@@ -47,7 +52,9 @@ async function updateConversation(
 	newUpdate: Partial<
 		ChatConversationMeta & {
 			content?: Message[];
-			label?: string;
+			runtimeContent?: Message[];
+			predictTokenCost?: number;
+			lastTokenCost?: number;
 		}
 	>,
 ): Promise<dbOperationRes<ChatConversation>> {
@@ -70,7 +77,7 @@ async function updateConversation(
 			},
 		};
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return {
 			success: false,
 			msg: msg.SERVER_ERROR,
@@ -82,12 +89,14 @@ async function createConversation(
 	newMsg: Pick<ChatConversationMeta, 'label'> & {
 		userId: string;
 		content: ChatConversation['content'];
+		runtimeContent: ChatConversation['runtimeContent'];
 	},
 ): Promise<dbOperationRes<ChatConversation>> {
 	try {
-		const { id, label, content } = await db.conversation.create({
-			data: newMsg,
-		});
+		const { id, label, content, runtimeContent } =
+			await db.conversation.create({
+				data: newMsg,
+			});
 		return {
 			success: true,
 			msg: '',
@@ -97,9 +106,11 @@ async function createConversation(
 					label: label,
 				},
 				content: content as Message[],
+				runtimeContent: runtimeContent as Message[],
 			},
 		};
 	} catch (error) {
+		console.error(error);
 		return {
 			success: false,
 			msg: msg.SERVER_ERROR,
@@ -119,6 +130,7 @@ async function deleteConversation(id: string): Promise<dbOperationRes<void>> {
 			msg: '',
 		};
 	} catch (error) {
+		console.error(error);
 		return {
 			success: false,
 			msg: msg.SERVER_ERROR,
@@ -144,11 +156,26 @@ async function getConversationList(
 			})),
 		};
 	} catch (error) {
+		console.error(error);
 		return {
 			success: false,
 			msg: msg.SERVER_ERROR,
 		};
 	}
+}
+
+async function getCharacteristic(
+	userId: string,
+): Promise<Memory.characteristic> {
+	const characteristic = await db.characteristic.findFirst({
+		where: {
+			userId,
+		},
+	});
+	if (!characteristic) {
+		throw new Error(msg.CHARACTERISTIC_NOT_EXIST);
+	}
+	return characteristic as unknown as Memory.characteristic;
 }
 
 export {
@@ -157,4 +184,5 @@ export {
 	getConversationList,
 	deleteConversation,
 	updateConversation,
+	getCharacteristic,
 };
