@@ -21,6 +21,9 @@ type dbOperationRes<T> = ApiResponse<T>;
 type ChatConversation = {
 	meta: chatConversationMeta;
 	content: Message[];
+	runtimeContent?: Message[];
+	predictTokenCost?: number;
+	lastTokenCost?: number;
 };
 
 type ChatConversationMeta = {

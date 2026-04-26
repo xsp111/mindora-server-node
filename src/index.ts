@@ -17,6 +17,8 @@ app.use(
 		credentials: true,
 	}),
 );
+
+// TODO: 重写所有 auth 逻辑，验证成功后将 id 注入上下文，否则返回 401
 app.use(
 	'*/auth/*',
 	jwt({

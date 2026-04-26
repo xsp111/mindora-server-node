@@ -12,8 +12,10 @@
 		"outDir": "./dist",
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["src/*"]
+			"@/*": ["src/*"],
+			"@services/*": ["src/services/*"],
+			"@agent/*": ["src/services/agent/*"]
 		}
 	},
-	"exclude": ["node_modules"]
+	"exclude": ["/node_modules/*"]
 }

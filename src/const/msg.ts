@@ -19,5 +19,6 @@ const msg = {
 	EMAIL_LOGIN_FAILED: '邮件登录失败',
 	MAIL_SEND_FAILED: '邮件发送失败',
 	PLEASE_TRY_AGAIN: '请重新尝试',
+	CHARACTERISTIC_NOT_EXIST: '用户画像不存在',
 };
 export default msg;
