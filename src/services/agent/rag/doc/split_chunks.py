@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 
-ROOT = Path(r"D:\code\front_end\project\Mindora\server\rag\doc\preprocessed")
+ROOT = Path("./ocr")
 SOURCE_FILES = [
     "心理学与生活.md",
     "认知行为疗法入门.md",
