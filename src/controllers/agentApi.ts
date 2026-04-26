@@ -1,39 +1,28 @@
 import type { Context } from 'hono';
 import { stream } from 'hono/streaming';
-import * as agent from '../services/agent/index.js';
-import type { ChatConversation } from '../const/api.js';
-import { memoryApiService } from '../services/agent/memory/index.js';
-import { authService } from '../services/index.js';
+import { memoryApiService } from '@agent/memory/index.js';
+import { authService } from '@services/index.js';
+import entry from '@/services/agent/entry.js';
 
 async function chat(c: Context) {
-	const {
-		meta: { id, label },
-		content,
-	}: ChatConversation = await c.req.json();
-	const clearContent = content.filter((item) => !item.loading);
-	const accessToken = c.req
-		.header('Authorization')
-		?.replace('Bearer ', '') as string;
-	const { data } = await authService.verifyAccessToken(accessToken);
-	const userId = data?.id as string;
-	const res = await agent.textChat(JSON.stringify(clearContent));
-	return stream(c, async (stream) => {
-		let finalMsg = '';
-		for await (const chunk of res) {
-			const resMsg = chunk.content as string;
-			await stream.write(resMsg);
-			finalMsg += resMsg;
-		}
-		await memoryApiService.updateConversation(id, {
-			content: [
-				...clearContent,
-				{
-					role: 'assistant',
-					content: finalMsg,
-				},
-			],
+	try {
+		const { conversationId, content } = await c.req.json();
+		const accessToken = c.req
+			.header('Authorization')
+			?.replace('Bearer ', '') as string;
+		const { data } = await authService.verifyAccessToken(accessToken);
+		const userId = data?.id as string;
+		return stream(c, async (stream) => {
+			await entry({
+				userId,
+				conversationId,
+				stream,
+				content,
+			});
 		});
-	});
+	} catch (err) {
+		console.error(err);
+	}
 }
 
 async function createConversation(c: Context) {
@@ -47,6 +36,7 @@ async function createConversation(c: Context) {
 		userId: userId,
 		label: defaultLabel,
 		content: [],
+		runtimeContent: [],
 	});
 	if (!success) {
 		return c.json({
@@ -117,7 +107,10 @@ async function get(c: Context) {
 				id: data?.meta?.id || '',
 				label: data?.meta?.label || '',
 			},
-			content: data?.content || [],
+			content:
+				data?.content?.filter(
+					(item) => item.role === 'user' || item.role === 'assistant',
+				) || [],
 		},
 	});
 }
@@ -147,6 +140,20 @@ async function getConversationList(c: Context) {
 	});
 }
 
+async function getCharacteristic(c: Context) {
+	const accessToken = c.req
+		.header('Authorization')
+		?.replace('Bearer ', '') as string;
+	const authRes = await authService.verifyAccessToken(accessToken);
+	const userId = authRes.data?.id as string;
+	const characteristic = await memoryApiService.getCharacteristic(userId);
+	return c.json({
+		success: true,
+		msg: '',
+		data: characteristic,
+	});
+}
+
 export {
 	chat,
 	createConversation,
@@ -154,4 +161,5 @@ export {
 	getConversationList,
 	deleteConversation,
 	newLabel,
+	getCharacteristic,
 };

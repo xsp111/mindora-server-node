@@ -1,9 +1,9 @@
 import type { Context } from 'hono';
-import type { User4ClientRes } from '../const/api.js';
-import msg from '../const/msg.js';
-import { loginService, mailService } from '../services/index.js';
+import type { User4ClientRes } from '@/const/api.js';
+import msg from '@/const/msg.js';
+import { loginService, mailService } from '@services/index.js';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { getApiRes } from '../utils/index.js';
+import { getApiRes } from '@/utils/index.js';
 import { streamSSE } from 'hono/streaming';
 
 async function signup(c: Context) {

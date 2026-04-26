@@ -146,6 +146,27 @@ async function signUp(
 	const user = await db.user.create({
 		data: signUpInfo,
 	});
+	await db.characteristic.create({
+		data: {
+			userId: user.id,
+			profileSummary: '',
+			overview: '',
+			emotionTrend7d: [],
+			dimensions: {
+				valence: -1,
+				arousal: -1,
+				stress: -1,
+				cognitive_distortion: -1,
+				regulation: -1,
+				risk: -1,
+			},
+			suggestions: [],
+			insights: {
+				summary: '',
+				keywords: [],
+			},
+		},
+	});
 	const accessToken = await getAccessToken({
 		id: user.id,
 	});

@@ -9,5 +9,6 @@ chatRoute.post('/get', agentApiController.get);
 chatRoute.post('/list', agentApiController.getConversationList);
 chatRoute.post('/delete', agentApiController.deleteConversation);
 chatRoute.post('/newLabel', agentApiController.newLabel);
+chatRoute.get('/profile', agentApiController.getCharacteristic);
 
 export default chatRoute;

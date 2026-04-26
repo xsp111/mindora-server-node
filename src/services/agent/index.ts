@@ -1,1 +1,1 @@
-export { default as textChat } from './module/textChatModule.js';
+export { default as runAgent } from './runAgent.js';
