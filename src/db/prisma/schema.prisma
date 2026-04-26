@@ -17,12 +17,27 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-
 model Conversation {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   userId    String   @db.ObjectId
   content   Json
+  runtimeContent Json?
+  lastTokenCost Int?
+  predictTokenCost Int?
   label     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Characteristic {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  profileSummary String
+  overview String
+  emotionTrend7d Json
+  dimensions Json
+  suggestions Json
+  insights Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
