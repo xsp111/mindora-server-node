@@ -29,3 +29,5 @@ lerna-debug.log*
 
 dist/
 /src/generated/prisma
+*.sqlite3
+**/rag/vdb/qdrant/*
