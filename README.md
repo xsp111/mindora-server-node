@@ -46,4 +46,4 @@ pnpm dev
 
 ## relative
 
-- [Mindora Frontend](https://github.com/xsp111/mindora-frontend)
+- [Mindora Frontend](https://github.com/xsp111/mindora-web)
