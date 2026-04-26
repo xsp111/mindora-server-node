@@ -18,11 +18,11 @@ export type chunk = {
 };
 
 export const embeddings = new OpenAIEmbeddings({
-	apiKey: process.env.QWEN_API_KEY,
+	apiKey: process.env.API_KEY,
 	configuration: {
-		baseURL: process.env.QWEN_API_BASE_URL,
+		baseURL: process.env.API_BASE_URL,
 	},
-	model: process.env.QWEN_EMBEDDING_MODEL,
+	model: process.env.EMBEDDING_MODEL,
 	dimensions: 1024,
 });
 

@@ -4,8 +4,8 @@ import type { ChatCompletionCreateParamsBase } from 'openai/resources/chat/compl
 import type { Model } from '../type.js';
 
 const client = new OpenAI({
-	apiKey: process.env.QWEN_API_KEY,
-	baseURL: process.env.QWEN_API_BASE_URL,
+	apiKey: process.env.API_KEY,
+	baseURL: process.env.API_BASE_URL,
 });
 
 async function send<T extends Partial<ChatCompletionCreateParamsBase>>(
@@ -23,7 +23,7 @@ async function send(
 	options: Partial<ChatCompletionCreateParamsBase> & {},
 ) {
 	const res = await client.chat.completions.create({
-		model: process.env.QWEN_MODEL || 'qwen3.5-flash',
+		model: process.env.MODEL || 'qwen3.5-flash',
 		messages,
 		...options,
 	});
