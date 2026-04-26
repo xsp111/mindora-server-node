@@ -29,7 +29,6 @@ async function verifyAccessToken(
 ): Promise<dbOperationRes<{ id: string }>> {
 	try {
 		const payload = jwt.verify(accessToken, process.env.JWT_SECRET || '');
-		console.log(payload);
 		return {
 			success: true,
 			msg: '',
