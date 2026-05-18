@@ -9,6 +9,7 @@ const msg = {
 	USER_NAME_ALREADY_EXISTS: '用户名已存在',
 	USER_NOT_FOUND: '用户不存在',
 	LOGOUT_SUCCESS: '退出成功',
+	ACCESS_UNAUTHORIZED: '没有访问权限，检查登录状态或刷新页面',
 	REFRESH_TOKEN_INVALID: '刷新令牌无效',
 	REFRESH_TOKEN_EXPIRED: '刷新令牌过期',
 	ACCESS_TOKEN_INVALID: '访问令牌无效',
@@ -20,5 +21,6 @@ const msg = {
 	MAIL_SEND_FAILED: '邮件发送失败',
 	PLEASE_TRY_AGAIN: '请重新尝试',
 	CHARACTERISTIC_NOT_EXIST: '用户画像不存在',
+	AVATAR_UPLOAD_FAILED: '头像上传失败',
 };
 export default msg;

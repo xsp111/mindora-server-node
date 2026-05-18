@@ -1,7 +1,7 @@
 import type { Prisma, User } from '@prisma/client';
 import db from '../db/index.js';
 import msg from '../const/msg.js';
-import { getHashRefreshToken } from '../utils/index.js';
+import { getHashRefreshToken, storeAvatar } from '../utils/index.js';
 import {
 	getAccessToken,
 	getRefreshToken,
@@ -9,6 +9,8 @@ import {
 	verifyRefreshToken,
 } from './auth.service.js';
 import { mail2Token } from './mail.service.js';
+import type { EditUserInfo } from '@/const/api.js';
+import type { Memory } from './agent/type.js';
 
 async function defaultLogin(
 	loginInput: Prisma.UserWhereInput,
@@ -143,8 +145,28 @@ async function signUp(
 	accessToken: string;
 	refreshToken: string;
 }> {
+	const defaultSettings: Memory.UserSettings = {
+		reply: {
+			style: 0,
+			gentle: 0,
+			passion: 0,
+			titleAndList: 0,
+			emoji: 0,
+			custom: '',
+		},
+		privacy: {
+			nickname: signUpInfo.name || '',
+			career: '',
+			detail: '',
+			useMemory: true,
+			reset: 0,
+		},
+	};
 	const user = await db.user.create({
-		data: signUpInfo,
+		data: {
+			...signUpInfo,
+			settings: defaultSettings,
+		},
 	});
 	await db.characteristic.create({
 		data: {
@@ -197,4 +219,41 @@ async function logout({ refreshToken }: { refreshToken: string | undefined }) {
 	});
 }
 
-export { defaultLogin, autoLoginVerify, emailLogin, signUp, logout };
+async function editUserInfo(
+	userId: string,
+	{ name, email, avatar }: EditUserInfo,
+) {
+	let avatarUrl = undefined;
+	if (avatar instanceof File) {
+		avatarUrl = await storeAvatar(userId, avatar);
+	}
+
+	const updateData: Prisma.UserUpdateInput = {};
+	if (avatarUrl) {
+		updateData.avatar = avatarUrl;
+	}
+	if (name) {
+		updateData.name = name;
+	}
+	if (email) {
+		updateData.email = email;
+	}
+
+	const user = await db.user.update({
+		where: {
+			id: userId,
+		},
+		data: updateData,
+	});
+
+	return user;
+}
+
+export {
+	defaultLogin,
+	autoLoginVerify,
+	emailLogin,
+	signUp,
+	logout,
+	editUserInfo,
+};

@@ -31,3 +31,4 @@ dist/
 /src/generated/prisma
 *.sqlite3
 **/rag/vdb/qdrant/*
+**/static/avatars/*

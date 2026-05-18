@@ -68,6 +68,26 @@ export namespace Memory {
 			keywords: Array<string>;
 		};
 	};
+
+	type degree = -1 | 0 | 1;
+
+	export type UserSettings = {
+		reply: {
+			style: number;
+			gentle: degree;
+			passion: degree;
+			titleAndList: degree;
+			emoji: degree;
+			custom: string;
+		};
+		privacy: {
+			nickname: string;
+			career: string;
+			detail: string;
+			useMemory: boolean;
+			reset: 0 | 1 | 7 | 30;
+		};
+	};
 }
 
 export namespace Tool {

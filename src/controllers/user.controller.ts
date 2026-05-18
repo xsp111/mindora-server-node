@@ -44,17 +44,13 @@ async function login(c: Context) {
 		return c.json(apiRes, 200);
 	}
 	try {
+		let serviceRes: any;
 		if (refreshToken) {
-			const verifyRes = await loginService.autoLoginVerify({
+			serviceRes = await loginService.autoLoginVerify({
 				refreshToken,
 			});
-			apiRes.data = {
-				name: verifyRes.user.name || '',
-				avatar: verifyRes.user.avatar || '/default-avatar.svg',
-				accessToken: verifyRes.accessToken,
-			};
 		} else {
-			const loginRes = await loginService.defaultLogin(
+			serviceRes = await loginService.defaultLogin(
 				{
 					name,
 					password,
@@ -62,19 +58,20 @@ async function login(c: Context) {
 				remember,
 			);
 			if (remember) {
-				setCookie(c, 'refreshToken', loginRes.refreshToken, {
+				setCookie(c, 'refreshToken', serviceRes.refreshToken, {
 					httpOnly: true,
 					secure: true,
 					sameSite: 'Strict',
 					maxAge: 60 * 60 * 24 * 30,
 				});
 			}
-			apiRes.data = {
-				name: loginRes.user.name || '',
-				avatar: loginRes.user?.avatar || '/default-avatar.svg',
-				accessToken: loginRes.accessToken,
-			};
 		}
+		apiRes.data = {
+			name: serviceRes.user.name || '',
+			avatar: serviceRes.user?.avatar || '/default-avatar.svg',
+			email: serviceRes.user?.email || '',
+			accessToken: serviceRes.accessToken,
+		};
 		apiRes.success = true;
 		apiRes.msg = msg.LOGIN_SUCCESS;
 		return c.json(apiRes, 200);
@@ -93,9 +90,11 @@ async function logout(c: Context) {
 	const apiRes = getApiRes();
 	const refreshToken = getCookie(c, 'refreshToken');
 	try {
-		await loginService.logout({
-			refreshToken,
-		});
+		if (refreshToken) {
+			await loginService.logout({
+				refreshToken,
+			});
+		}
 		deleteCookie(c, 'refreshToken');
 		apiRes.success = true;
 		apiRes.msg = msg.LOGOUT_SUCCESS;
@@ -190,10 +189,31 @@ async function emailLogin(c: Context) {
 	}
 }
 
+async function editUserInfo(c: Context) {
+	const apiRes = getApiRes();
+	const editInfo = await c.req.parseBody();
+	const userId = c.get('userId');
+	try {
+		const user = await loginService.editUserInfo(userId, editInfo);
+		apiRes.success = true;
+		apiRes.data = {
+			name: user.name,
+			avatar: user.avatar,
+			email: user.email,
+		};
+		return c.json(apiRes, 200);
+	} catch (error) {
+		console.error(error);
+		apiRes.msg = msg.SERVER_ERROR;
+		return c.json(apiRes, 200);
+	}
+}
+
 export {
 	signup,
 	login,
 	logout,
+	editUserInfo,
 	sendVerifyEmail,
 	wait4ClientVerify,
 	emailLogin,

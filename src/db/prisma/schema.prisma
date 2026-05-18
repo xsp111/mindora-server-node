@@ -13,6 +13,7 @@ model User {
   avatar    String?
   password  String?  
   email     String   @default("")
+  settings  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

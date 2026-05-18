@@ -4,9 +4,16 @@ type ApiResponse<T> = {
 	data?: T;
 };
 
+type EditUserInfo = {
+	name?: string;
+	email?: string;
+	avatar?: File;
+};
+
 type User4ClientRes = {
 	name: string;
 	avatar: string;
+	email?: string;
 };
 
 type Message = {
@@ -37,6 +44,7 @@ export {
 	ApiResponse,
 	dbOperationRes,
 	User4ClientRes,
+	EditUserInfo,
 	Message,
 	ChatConversation,
 	ChatConversationMeta,

@@ -1,17 +1,13 @@
+import type { Memory } from '@agent/type.js';
 import type { Context } from 'hono';
 import { stream } from 'hono/streaming';
 import { memoryApiService } from '@agent/memory/index.js';
-import { authService } from '@services/index.js';
 import entry from '@/services/agent/entry.js';
 
 async function chat(c: Context) {
 	try {
 		const { conversationId, content } = await c.req.json();
-		const accessToken = c.req
-			.header('Authorization')
-			?.replace('Bearer ', '') as string;
-		const { data } = await authService.verifyAccessToken(accessToken);
-		const userId = data?.id as string;
+		const userId = c.get('userId');
 		return stream(c, async (stream) => {
 			await entry({
 				userId,
@@ -26,11 +22,7 @@ async function chat(c: Context) {
 }
 
 async function createConversation(c: Context) {
-	const accessToken = c.req
-		.header('Authorization')
-		?.replace('Bearer ', '') as string;
-	const authRes = await authService.verifyAccessToken(accessToken);
-	const userId = authRes.data?.id as string;
+	const userId = c.get('userId');
 	const defaultLabel = '新对话';
 	const { success, msg, data } = await memoryApiService.createConversation({
 		userId: userId,
@@ -116,11 +108,7 @@ async function get(c: Context) {
 }
 
 async function getConversationList(c: Context) {
-	const accessToken = c.req
-		.header('Authorization')
-		?.replace('Bearer ', '') as string;
-	const authRes = await authService.verifyAccessToken(accessToken);
-	const userId = authRes.data?.id as string;
+	const userId = c.get('userId');
 	const { success, msg, data } =
 		await memoryApiService.getConversationList(userId);
 	if (!success) {
@@ -141,16 +129,39 @@ async function getConversationList(c: Context) {
 }
 
 async function getCharacteristic(c: Context) {
-	const accessToken = c.req
-		.header('Authorization')
-		?.replace('Bearer ', '') as string;
-	const authRes = await authService.verifyAccessToken(accessToken);
-	const userId = authRes.data?.id as string;
+	const userId = c.get('userId');
 	const characteristic = await memoryApiService.getCharacteristic(userId);
 	return c.json({
 		success: true,
 		msg: '',
 		data: characteristic,
+	});
+}
+
+async function getSettings(c: Context) {
+	const userId = c.get('userId');
+	const settingsPart = c.req.query('part') as keyof Memory.UserSettings;
+	const settings = await memoryApiService.getSettings(userId, settingsPart);
+	return c.json({
+		success: true,
+		msg: '',
+		data: settings,
+	});
+}
+
+async function updateSettings(c: Context) {
+	const userId = c.get('userId');
+	const settingsPart = c.req.query('part') as keyof Memory.UserSettings;
+	const settings = await c.req.json();
+	const newSettings = await memoryApiService.updateSettings(
+		userId,
+		settingsPart,
+		settings,
+	);
+	return c.json({
+		success: true,
+		msg: '',
+		data: newSettings[settingsPart],
 	});
 }
 
@@ -162,4 +173,6 @@ export {
 	deleteConversation,
 	newLabel,
 	getCharacteristic,
+	getSettings,
+	updateSettings,
 };

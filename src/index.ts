@@ -5,6 +5,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { jwt } from 'hono/jwt';
 import { serveStatic } from '@hono/node-server/serve-static';
+import { authAccessTokenJWT } from './middleware/index.js';
 
 const app = new Hono();
 
@@ -18,13 +19,7 @@ app.use(
 	}),
 );
 
-// TODO: 重写所有 auth 逻辑，验证成功后将 id 注入上下文，否则返回 401
-app.use(
-	'*/auth/*',
-	jwt({
-		secret: process.env.JWT_SECRET || '',
-	}),
-);
+app.use('*/auth/*', authAccessTokenJWT);
 
 app.route('/api', apiRoute);
 

@@ -10,5 +10,7 @@ chatRoute.post('/list', agentApiController.getConversationList);
 chatRoute.post('/delete', agentApiController.deleteConversation);
 chatRoute.post('/newLabel', agentApiController.newLabel);
 chatRoute.get('/profile', agentApiController.getCharacteristic);
+chatRoute.get('/settings', agentApiController.getSettings);
+chatRoute.post('/update-settings', agentApiController.updateSettings);
 
 export default chatRoute;
