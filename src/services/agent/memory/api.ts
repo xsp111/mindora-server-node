@@ -178,6 +178,46 @@ async function getCharacteristic(
 	return characteristic as unknown as Memory.characteristic;
 }
 
+async function getSettings(
+	userId: string,
+	settingsPart: keyof Memory.UserSettings,
+) {
+	const user = await db.user.findFirst({
+		where: {
+			id: userId,
+		},
+	});
+	if (!user) {
+		throw new Error('User not found');
+	}
+	return (user.settings as Memory.UserSettings)[settingsPart];
+}
+
+async function updateSettings(
+	userId: string,
+	settingsPart: keyof Memory.UserSettings,
+	newSettings: Memory.UserSettings[typeof settingsPart],
+) {
+	const user = await db.user.findFirst({
+		where: {
+			id: userId,
+		},
+	});
+	const oldSettings = user?.settings as Memory.UserSettings;
+	const { settings: updatedSettings } = await db.user.update({
+		where: {
+			id: userId,
+		},
+		data: {
+			settings: {
+				...oldSettings,
+				[settingsPart]: newSettings,
+			},
+		},
+	});
+	return updatedSettings as Memory.UserSettings;
+}
+
 export {
 	getCurrentConversation,
 	createConversation,
@@ -185,4 +225,6 @@ export {
 	deleteConversation,
 	updateConversation,
 	getCharacteristic,
+	getSettings,
+	updateSettings,
 };
